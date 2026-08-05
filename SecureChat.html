@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SecureChat</title>
+<style>
+/* ============ RESET & BASE ============ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#0e1621;color:#fff;user-select:none}
+
+/* ============ SCROLLBAR ============ */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#2b5278;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#3a6a99}
+
+/* ============ LAYOUT ============ */
+.app{display:flex;height:100vh}
+.sidebar{width:320px;min-width:320px;background:#17212b;display:flex;flex-direction:column;border-right:1px solid #0e1621}
+.main{flex:1;display:flex;flex-direction:column;background:#0e1621;position:relative}
+
+/* ============ SIDEBAR ============ */
+.sidebar-header{background:#2b5278;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;height:56px}
+.sidebar-header h1{font-size:16px;font-weight:600;letter-spacing:0.3px}
+.sidebar-header .icon-btn{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;padding:4px 8px;border-radius:50%;opacity:.8;transition:opacity .15s}
+.sidebar-header .icon-btn:hover{opacity:1}
+.sidebar-search{padding:8px 12px;background:#17212b}
+.sidebar-search input{width:100%;padding:8px 12px;border-radius:8px;border:none;background:#242f3d;color:#fff;font-size:14px;outline:none}
+.sidebar-search input::placeholder{color:#6c7884}
+.sidebar-search input:focus{background:#2b3b4c}
+.contact-list{flex:1;overflow-y:auto;padding:0}
+.contact-item{display:flex;align-items:center;padding:10px 16px;cursor:pointer;transition:background .1s;border-bottom:1px solid rgba(255,255,255,.03)}
+.contact-item:hover{background:#202b36}
+.contact-item.active{background:#2b5278}
+.contact-avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#fff;flex-shrink:0;margin-right:12px;background:#2b5278}
+.contact-info{flex:1;min-width:0}
+.contact-name{font-size:15px;font-weight:500;margin-bottom:2px}
+.contact-status{font-size:12px;color:#6c7884}
+.contact-status.online{color:#4fc3f7}
+
+/* ============ MAIN CHAT ============ */
+.chat-header{background:#2b5278;padding:10px 16px;display:flex;align-items:center;height:56px;gap:12px}
+.chat-header .back-btn{display:none;background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:0 4px}
+.chat-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#fff;flex-shrink:0;background:#4fc3f7}
+.chat-header-info{flex:1;min-width:0}
+.chat-header-name{font-size:15px;font-weight:500}
+.chat-header-status{font-size:12px;color:rgba(255,255,255,.7)}
+.chat-header-status.connected{color:#4fc3f7}
+.chat-header .icon-btn{background:none;border:none;color:#fff;font-size:18px;cursor:pointer;padding:6px;border-radius:50%;opacity:.7;transition:opacity .15s}
+.chat-header .icon-btn:hover{opacity:1}
+
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:11px;line-height:1.4}
+.badge.secure{background:rgba(76,175,80,.2);color:#4caf50}
+.badge.insecure{background:rgba(255,152,0,.2);color:#ff9800}
+.badge.connected{background:rgba(79,195,247,.2);color:#4fc3f7}
+
+/* ============ MESSAGES ============ */
+.messages{flex:1;overflow-y:auto;padding:16px 48px;display:flex;flex-direction:column;gap:4px}
+.message{max-width:520px;padding:8px 12px;border-radius:8px;font-size:14px;line-height:1.5;position:relative;word-wrap:break-word;white-space:pre-wrap}
+.message.sent{background:#2b5278;align-self:flex-end;border-bottom-right-radius:4px}
+.message.received{background:#182533;align-self:flex-start;border-bottom-left-radius:4px}
+.message .time{font-size:10px;color:rgba(255,255,255,.4);text-align:right;margin-top:2px}
+.message.sent .time{color:rgba(255,255,255,.5)}
+.message.system{background:transparent;align-self:center;font-size:12px;color:#6c7884;max-width:80%;text-align:center}
+
+/* ============ INPUT AREA ============ */
+.chat-input{background:#17212b;padding:8px 16px;display:flex;align-items:flex-end;gap:8px;border-top:1px solid #0e1621}
+.chat-input textarea{flex:1;background:#242f3d;border:none;border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;resize:none;outline:none;max-height:120px;font-family:inherit;line-height:1.4}
+.chat-input textarea::placeholder{color:#6c7884}
+.chat-input textarea:focus{background:#2b3b4c}
+.chat-input .send-btn{background:#2b5278;border:none;color:#fff;width:42px;height:42px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:background .15s;flex-shrink:0}
+.chat-input .send-btn:hover{background:#3a6a99}
+.chat-input .send-btn:disabled{background:#1a3042;color:#5a6a78;cursor:not-allowed}
+
+/* ============ PLACEHOLDER ============ */
+.empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#6c7884;gap:16px;padding:40px}
+.empty-state .icon{font-size:72px;opacity:.3}
+.empty-state h2{font-size:22px;font-weight:400;color:#8896a6}
+.empty-state p{font-size:14px;text-align:center;max-width:400px;line-height:1.6}
+
+/* ============ MODAL ============ */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:#17212b;border-radius:12px;width:520px;max-width:94vw;max-height:90vh;overflow-y:auto;padding:0;box-shadow:0 8px 40px rgba(0,0,0,.5)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid rgba(255,255,255,.08)}
+.modal-header h3{font-size:17px;font-weight:500}
+.modal-close{background:none;border:none;color:#6c7884;font-size:22px;cursor:pointer;padding:4px;line-height:1}
+.modal-close:hover{color:#fff}
+.modal-body{padding:24px;display:flex;flex-direction:column;gap:18px}
+.modal-footer{padding:16px 24px;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:flex-end;gap:10px}
+
+/* ============ FORM ELEMENTS ============ */
+label{font-size:13px;color:#8896a6;display:block;margin-bottom:4px;font-weight:500}
+textarea.code-input{width:100%;background:#0e1621;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:12px;color:#b0bec5;font-family:"SF Mono","Fira Code","Consolas",monospace;font-size:12px;resize:vertical;outline:none;min-height:80px;line-height:1.5}
+textarea.code-input:focus{border-color:#2b5278}
+textarea.code-input::placeholder{color:#4a5a6a}
+.key-display{background:#0e1621;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px;color:#b0bec5;font-family:"SF Mono","Fira Code","Consolas",monospace;font-size:11px;word-break:break-all;line-height:1.6;max-height:120px;overflow-y:auto}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:8px;border:none;font-size:14px;font-weight:500;cursor:pointer;transition:all .15s;font-family:inherit}
+.btn-primary{background:#2b5278;color:#fff}
+.btn-primary:hover{background:#3a6a99}
+.btn-primary:disabled{background:#1a3042;color:#5a6a78;cursor:not-allowed}
+.btn-success{background:#4caf50;color:#fff}
+.btn-success:hover{background:#388e3c}
+.btn-success:disabled{background:#1b5e20;color:#5a6a78;cursor:not-allowed}
+.btn-danger{background:#e53935;color:#fff}
+.btn-danger:hover{background:#c62828}
+.btn-outline{background:transparent;color:#8896a6;border:1px solid rgba(255,255,255,.12)}
+.btn-outline:hover{background:rgba(255,255,255,.05);color:#fff}
+.btn-sm{padding:6px 14px;font-size:12px}
+.btn-block{width:100%;justify-content:center}
+
+/* ============ STATUS STEPS ============ */
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05)}
+.step.done{background:rgba(76,175,80,.08);border-color:rgba(76,175,80,.2)}
+.step.active{background:rgba(79,195,247,.08);border-color:rgba(79,195,247,.2)}
+.step .num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;background:rgba(255,255,255,.08);color:#8896a4}
+.step.done .num{background:#4caf50;color:#fff}
+.step.active .num{background:#4fc3f7;color:#fff}
+.step-content{flex:1;min-width:0}
+.step-title{font-size:14px;font-weight:500;margin-bottom:2px}
+.step-desc{font-size:12px;color:#6c7884;line-height:1.4}
+.step .step-action{margin-top:8px}
+
+/* ============ TOAST ============ */
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#2b5278;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;z-index:2000;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.toast.show{opacity:1;pointer-events:auto}
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:768px){
+  .sidebar{width:100%;min-width:100%}
+  .sidebar.hide{display:none}
+  .main.show{display:flex}
+  .main:not(.show){display:none}
+  .chat-header .back-btn{display:block}
+  .messages{padding:12px 16px}
+  .message{max-width:90%}
+  .modal{max-width:98vw}
+}
+
+/* ============ ENCRYPTION BADGE ============ */
+.encryption-badge{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:6px;font-size:12px;margin:0 12px}
+.encryption-badge.locked{background:rgba(76,175,80,.1);color:#4caf50}
+.encryption-badge.unlocked{background:rgba(255,152,0,.1);color:#ff9800}
+
+/* ============ MESSAGE ENCRYPTION ICON ============ */
+.msg-enc-icon{font-size:10px;margin-right:4px;opacity:.5}
+
+/* ============ SETUP OVERLAY ============ */
+.setup-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0e1621;z-index:999;display:flex;align-items:center;justify-content:center;transition:opacity .4s,transform .4s}
+.setup-overlay.hidden{opacity:0;transform:scale(1.05);pointer-events:none}
+.setup-card{background:#17212b;border-radius:16px;padding:40px;max-width:480px;width:90%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.5)}
+.setup-card .logo{font-size:56px;margin-bottom:16px;opacity:.9}
+.setup-card h2{font-size:24px;font-weight:600;margin-bottom:8px}
+.setup-card .sub{color:#6c7884;font-size:14px;margin-bottom:28px;line-height:1.5}
+.setup-card .btn{margin-top:4px}
+</style>
+</head>
+<body>
+
+<!-- ========== TOAST ========== -->
+<div class="toast" id="toast"></div>
+
+<!-- ========== SETUP OVERLAY ========== -->
+<div class="setup-overlay" id="setupOverlay">
+  <div class="setup-card">
+    <div class="logo">🔐</div>
+    <h2>SecureChat</h2>
+    <p class="sub">端到端加密聊天 · 密钥离线交换<br>全程不上传网络，仅您和对方知晓</p>
+    <button class="btn btn-primary btn-block" onclick="initSetup()">开始安全设置</button>
+    <p style="margin-top:18px;font-size:11px;color:#4a5a6a">基于 ECDH + AES-256-GCM • 开源安全</p>
+  </div>
+</div>
+
+<!-- ========== APP ========== -->
+<div class="app" id="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h1>SecureChat</h1>
+      <button class="icon-btn" onclick="openSettings()" title="安全设置">⚙</button>
+    </div>
+    <div class="sidebar-search"><input type="text" placeholder="搜索..." disabled></div>
+    <div class="contact-list" id="contactList">
+      <div class="contact-item active" id="contactFriend" onclick="selectContact()">
+        <div class="contact-avatar" id="contactAvatar">🤝</div>
+        <div class="contact-info">
+          <div class="contact-name">加密聊天</div>
+          <div class="contact-status" id="contactStatus">等待安全设置...</div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:10px 16px;border-top:1px solid rgba(255,255,255,.05);display:flex;align-items:center;gap:10px;font-size:12px;color:#6c7884" id="securityFooter">
+      <span id="encStatusIcon">🔓</span>
+      <span id="encStatusText">未加密</span>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main" id="main">
+    <div class="chat-header">
+      <button class="back-btn" onclick="showSidebar()">←</button>
+      <div class="chat-avatar" id="chatAvatar">🤝</div>
+      <div class="chat-header-info">
+        <div class="chat-header-name">加密聊天</div>
+        <div class="chat-header-status" id="chatStatus">等待安全设置...</div>
+      </div>
+      <span class="badge secure" id="encBadge" style="display:none">🔒 端到端加密</span>
+      <button class="icon-btn" onclick="openSettings()" title="安全设置">⚙</button>
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty-state" id="emptyState">
+      <div class="icon">💬</div>
+      <h2>SecureChat</h2>
+      <p>端到端加密聊天<br>点击右上角 ⚙ 完成安全设置后开始聊天</p>
+    </div>
+
+    <!-- Messages -->
+    <div class="messages" id="messages" style="display:none"></div>
+
+    <!-- Input -->
+    <div class="chat-input" id="chatInput" style="display:none">
+      <textarea id="msgInput" rows="1" placeholder="输入消息..." disabled onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"></textarea>
+      <button class="send-btn" id="sendBtn" disabled onclick="sendMsg()">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SETTINGS MODAL ========== -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal" style="width:580px">
+    <div class="modal-header">
+      <h3>🔐 安全设置</h3>
+      <button class="modal-close" onclick="closeSettings()">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- Steps -->
+      <div class="steps" id="setupSteps">
+        <!-- Step 1: Generate Keys -->
+        <div class="step active" id="step1">
+          <div class="num">1</div>
+          <div class="step-content">
+            <div class="step-title">生成密钥对</div>
+            <div class="step-desc">生成 ECDH (P-256) 非对称密钥对 — 私钥仅保存在本页面内存中</div>
+            <div class="step-action">
+              <button class="btn btn-primary btn-sm" id="genKeysBtn" onclick="generateKeys()">生成密钥对</button>
+              <span id="genKeysDone" style="display:none;color:#4caf50;font-size:13px;margin-left:8px">✓ 已生成</span>
+            </div>
+          </div>
+        </div>
+        <!-- Step 2: Share Public Key -->
+        <div class="step" id="step2">
+          <div class="num">2</div>
+          <div class="step-content">
+            <div class="step-title">交换公钥</div>
+            <div class="step-desc">将您的公钥发给对方，并粘贴对方的公钥。公钥可公开，仅用于协商加密密钥。</div>
+            <div style="margin-top:10px;display:flex;flex-direction:column;gap:10px">
+              <div>
+                <label>您的公钥（复制发给对方）</label>
+                <div class="key-display" id="myPublicKeyDisplay">请先生成密钥对</div>
+                <button class="btn btn-outline btn-sm" style="margin-top:6px" onclick="copyMyPublicKey()">📋 复制我的公钥</button>
+              </div>
+              <div>
+                <label>对方的公钥（粘贴在此）</label>
+                <textarea class="code-input" id="peerPublicKeyInput" rows="3" placeholder="粘贴对方公钥..."></textarea>
+                <button class="btn btn-primary btn-sm" style="margin-top:6px" id="setPeerKeyBtn" disabled onclick="setPeerPublicKey()">确认公钥</button>
+                <span id="peerKeyDone" style="display:none;color:#4caf50;font-size:13px;margin-left:8px">✓ 已确认</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Step 3: Derive Shared Key -->
+        <div class="step" id="step3">
+          <div class="num">3</div>
+          <div class="step-content">
+            <div class="step-title">派生共享密钥</div>
+            <div class="step-desc">使用 ECDH 密钥协商 + HKDF-SHA256 派生 AES-256-GCM 对称密钥。此密钥仅存在于双方内存中，永不传输。</div>
+            <div class="step-action">
+              <button class="btn btn-success btn-sm" id="deriveBtn" disabled onclick="deriveSharedKey()">✨ 派生共享密钥</button>
+              <span id="deriveDone" style="display:none;color:#4caf50;font-size:13px;margin-left:8px">✓ 加密就绪</span>
+            </div>
+          </div>
+        </div>
+        <!-- Step 4: WebRTC Connection -->
+        <div class="step" id="step4">
+          <div class="num">4</div>
+          <div class="step-content">
+            <div class="step-title">建立 P2P 连接</div>
+            <div class="step-desc">通过 WebRTC 建立点对点连接。手动交换连接信令（SDP），信令中包含公钥，无需额外服务器。</div>
+            <div style="margin-top:10px;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn btn-primary btn-sm" id="createOfferBtn" disabled onclick="createOffer()">📤 创建连接邀请</button>
+                <button class="btn btn-outline btn-sm" id="pasteAnswerBtn" onclick="document.getElementById('sdpInput').focus()">📥 粘贴对方应答</button>
+                <button class="btn btn-outline btn-sm" id="acceptOfferBtn" onclick="showAcceptOffer()">📋 接受邀请</button>
+              </div>
+              <div>
+                <label>信令数据（SDP）</label>
+                <textarea class="code-input" id="sdpInput" rows="4" placeholder="粘贴或复制信令数据..."></textarea>
+              </div>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-success btn-sm" id="connectBtn" disabled onclick="applySDP()">🔗 应用连接</button>
+                <span id="connStatus" style="font-size:13px;align-self:center;color:#6c7884">等待连接...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <span id="overallStatus" style="flex:1;font-size:12px;color:#6c7884;align-self:center">🔓 未加密</span>
+      <button class="btn btn-outline" onclick="closeSettings()">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== ACCEPT OFFER MODAL ========== -->
+<div class="modal-overlay" id="acceptModal">
+  <div class="modal" style="width:520px">
+    <div class="modal-header">
+      <h3>📋 接受连接邀请</h3>
+      <button class="modal-close" onclick="closeAcceptModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <label>粘贴对方的连接邀请数据</label>
+      <textarea class="code-input" id="acceptSDPInput" rows="6" placeholder="粘贴对方生成的连接邀请数据..."></textarea>
+      <div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" id="acceptProcessBtn" onclick="processAcceptOffer()">处理并生成应答</button>
+        <button class="btn btn-outline" onclick="closeAcceptModal()">取消</button>
+      </div>
+      <div id="acceptResult" style="display:none;margin-top:10px">
+        <label>应答数据（复制发送给对方）</label>
+        <div class="key-display" id="answerData" style="max-height:200px"></div>
+        <button class="btn btn-outline btn-sm" style="margin-top:6px" onclick="copyAnswerData()">📋 复制应答数据</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   CRYPTO MODULE — ECDH + AES-256-GCM + HKDF-SHA256
+   ===================================================================== */
+const Crypto = {
+  keyPair: null,         // CryptoKeyPair
+  publicKeyBase64: null, // string
+  peerPublicKey: null,   // CryptoKey
+  sharedKey: null,       // CryptoKey (AES-GCM 256)
+
+  /** Generate ECDH P-256 key pair */
+  async generateKeyPair() {
+    this.keyPair = await crypto.subtle.generateKey(
+      { name: "ECDH", namedCurve: "P-256" },
+      true,
+      ["deriveKey", "deriveBits"]
+    );
+    // Export public key as raw base64
+    const raw = await crypto.subtle.exportKey("raw", this.keyPair.publicKey);
+    this.publicKeyBase64 = arrayBufferToBase64(raw);
+    return this.publicKeyBase64;
+  },
+
+  /** Import peer's raw public key (base64) */
+  async importPeerPublicKey(b64) {
+    const raw = base64ToArrayBuffer(b64);
+    this.peerPublicKey = await crypto.subtle.importKey(
+      "raw", raw,
+      { name: "ECDH", namedCurve: "P-256" },
+      true, []
+    );
+  },
+
+  /** Derive shared AES-256-GCM key via ECDH + HKDF-SHA256 */
+  async deriveSharedKey() {
+    if (!this.keyPair || !this.peerPublicKey) throw new Error("Missing keys");
+    // Derive ECDH shared secret (32 bytes for P-256)
+    const sharedBits = await crypto.subtle.deriveBits(
+      { name: "ECDH", public: this.peerPublicKey },
+      this.keyPair.privateKey,
+      256
+    );
+    // Use HKDF to derive a strong AES-256-GCM key from the shared secret
+    // Salt and info are static strings — this is acceptable since the
+    // shared secret already has full entropy from ECDH.
+    const salt = new TextEncoder().encode("SecureChat-ECDH-v1");
+    const info = new TextEncoder().encode("AES-256-GCM-Key");
+    const hkdfKey = await crypto.subtle.importKey(
+      "raw", sharedBits, "HKDF", false, ["deriveKey"]
+    );
+    this.sharedKey = await crypto.subtle.deriveKey(
+      {
+        name: "HKDF",
+        salt: salt,
+        info: info,
+        hash: "SHA-256"
+      },
+      hkdfKey,
+      { name: "AES-GCM", length: 256 },
+      false,
+      ["encrypt", "decrypt"]
+    );
+    return true;
+  },
+
+  /** Encrypt plaintext -> base64(iv+ciphertext+tag) */
+  async encrypt(plaintext) {
+    if (!this.sharedKey) throw new Error("Shared key not derived");
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const encoded = new TextEncoder().encode(plaintext);
+    const encrypted = await crypto.subtle.encrypt(
+      { name: "AES-GCM", iv: iv },
+      this.sharedKey,
+      encoded
+    );
+    // Combine iv + ciphertext
+    const combined = new Uint8Array(iv.length + encrypted.byteLength);
+    combined.set(iv, 0);
+    combined.set(new Uint8Array(encrypted), iv.length);
+    return arrayBufferToBase64(combined.buffer);
+  },
+
+  /** Decrypt base64(iv+ciphertext+tag) -> plaintext */
+  async decrypt(cipherB64) {
+    if (!this.sharedKey) throw new Error("Shared key not derived");
+    const combined = new Uint8Array(base64ToArrayBuffer(cipherB64));
+    const iv = combined.slice(0, 12);
+    const data = combined.slice(12);
+    const decrypted = await crypto.subtle.decrypt(
+      { name: "AES-GCM", iv: iv },
+      this.sharedKey,
+      data
+    );
+    return new TextDecoder().decode(decrypted);
+  }
+};
+
+/* =====================================================================
+   WEBRTC MODULE — P2P DataChannel
+   ===================================================================== */
+const WebRTC = {
+  pc: null,
+  dc: null,
+  isConnected: false,
+  isOfferer: false,
+  onMessage: null,
+  onConnect: null,
+
+  /** Create a new RTCPeerConnection */
+  _createPC() {
+    const pc = new RTCPeerConnection({
+      iceServers: [
+        { urls: "stun:stun.l.google.com:19302" },
+        { urls: "stun:stun1.l.google.com:19302" }
+      ]
+    });
+    // Wait for ICE gathering to complete so all candidates are in the SDP
+    this._gatherComplete = new Promise((resolve) => {
+      const timeout = setTimeout(() => resolve(), 3000);
+      pc.onicegatheringstatechange = () => {
+        if (pc.iceGatheringState === "complete") {
+          clearTimeout(timeout);
+          resolve();
+        }
+      };
+    });
+    pc.onconnectionstatechange = () => {
+      updateConnStatus(pc.connectionState);
+      if (pc.connectionState === "connected") {
+        this.isConnected = true;
+        if (this.onConnect) this.onConnect();
+      } else if (pc.connectionState === "failed" || pc.connectionState === "disconnected") {
+        this.isConnected = false;
+      }
+    };
+    pc.ondatachannel = (e) => {
+      this.dc = e.channel;
+      this._setupDC();
+    };
+    return pc;
+  },
+
+  _setupDC() {
+    const dc = this.dc;
+    dc.onopen = () => {
+      this.isConnected = true;
+      if (this.onConnect) this.onConnect();
+    };
+    dc.onclose = () => { this.isConnected = false; };
+    dc.onmessage = (e) => {
+      if (this.onMessage) this.onMessage(e.data);
+    };
+  },
+
+  /** Create an offer (caller side) */
+  async createOffer() {
+    this.isOfferer = true;
+    this.pc = this._createPC();
+    this.dc = this.pc.createDataChannel("securechat");
+    this._setupDC();
+    const offer = await this.pc.createOffer();
+    await this.pc.setLocalDescription(offer);
+    // Wait for ICE candidates to gather
+    await this._gatherComplete;
+    return this._wrapSDP(this.pc.localDescription);
+  },
+
+  /** Create an answer from received offer (callee side) */
+  async createAnswer(wrappedSDP) {
+    this.isOfferer = false;
+    this.pc = this._createPC();
+    const { sdp, publicKey } = this._unwrapSDP(wrappedSDP);
+    await this.pc.setRemoteDescription({ type: "offer", sdp: sdp });
+    // If there's a public key, import it
+    if (publicKey && !Crypto.peerPublicKey) {
+      await Crypto.importPeerPublicKey(publicKey);
+      // Auto-derive shared key if we have our keys and peer's public key
+      if (Crypto.keyPair && Crypto.peerPublicKey && !Crypto.sharedKey) {
+        await Crypto.deriveSharedKey();
+        state.sharedKeyDerived = true;
+        state.peerKeySet = true;
+        // Update UI fields
+        document.getElementById("peerPublicKeyInput").value = "(通过 WebRTC 信令自动交换)";
+        document.getElementById("setPeerKeyBtn").disabled = true;
+        document.getElementById("setPeerKeyBtn").textContent = "✓ 已确认";
+        document.getElementById("peerKeyDone").style.display = "inline";
+        document.getElementById("deriveBtn").disabled = true;
+        document.getElementById("deriveBtn").textContent = "✓ 已派生";
+        document.getElementById("deriveDone").style.display = "inline";
+        updateUI();
+      }
+    }
+    const answer = await this.pc.createAnswer();
+    await this.pc.setLocalDescription(answer);
+    // Wait for ICE candidates to gather
+    await this._gatherComplete;
+    // Build answer with our public key
+    const answerWrapped = this._wrapSDP(this.pc.localDescription);
+    return answerWrapped;
+  },
+
+  /** Apply remote answer (caller side) */
+  async applyAnswer(wrappedSDP) {
+    if (!this.pc) throw new Error("No peer connection");
+    const { sdp, publicKey } = this._unwrapSDP(wrappedSDP);
+    await this.pc.setRemoteDescription({ type: "answer", sdp: sdp });
+    if (publicKey && !Crypto.peerPublicKey) {
+      await Crypto.importPeerPublicKey(publicKey);
+      // Auto-derive shared key
+      if (Crypto.keyPair && Crypto.peerPublicKey && !Crypto.sharedKey) {
+        await Crypto.deriveSharedKey();
+        state.sharedKeyDerived = true;
+        state.peerKeySet = true;
+        document.getElementById("peerPublicKeyInput").value = "(通过 WebRTC 信令自动交换)";
+        document.getElementById("setPeerKeyBtn").disabled = true;
+        document.getElementById("setPeerKeyBtn").textContent = "✓ 已确认";
+        document.getElementById("peerKeyDone").style.display = "inline";
+        document.getElementById("deriveBtn").disabled = true;
+        document.getElementById("deriveBtn").textContent = "✓ 已派生";
+        document.getElementById("deriveDone").style.display = "inline";
+        updateUI();
+      }
+    }
+    // All ICE candidates are already in the SDP (gathered before wrapping)
+  },
+
+  /** Send data over the data channel */
+  send(data) {
+    if (this.dc && this.dc.readyState === "open") {
+      this.dc.send(data);
+      return true;
+    }
+    return false;
+  },
+
+  /** Close the connection */
+  close() {
+    if (this.dc) { try { this.dc.close(); } catch(e) {} }
+    if (this.pc) { try { this.pc.close(); } catch(e) {} }
+    this.pc = null;
+    this.dc = null;
+    this.isConnected = false;
+    this.isOfferer = false;
+    this._gatherComplete = null;
+  },
+
+  /** Wrap SDP with public key */
+  _wrapSDP(desc) {
+    return JSON.stringify({
+      type: desc.type,
+      sdp: desc.sdp,
+      publicKey: Crypto.publicKeyBase64
+    });
+  },
+
+  /** Unwrap SDP to extract sdp string and public key */
+  _unwrapSDP(wrapped) {
+    let obj;
+    if (typeof wrapped === "string") {
+      try { obj = JSON.parse(wrapped); } catch(e) {
+        // Plain SDP string
+        return { sdp: wrapped, publicKey: null };
+      }
+    } else {
+      obj = wrapped;
+    }
+    return { sdp: obj.sdp, publicKey: obj.publicKey || null };
+  }
+};
+
+/* =====================================================================
+   UTILITY FUNCTIONS
+   ===================================================================== */
+function arrayBufferToBase64(buf) {
+  const bytes = new Uint8Array(buf);
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary);
+}
+
+function base64ToArrayBuffer(b64) {
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes.buffer;
+}
+
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove("show"), 2500);
+}
+
+/* =====================================================================
+   UI STATE
+   ===================================================================== */
+let state = {
+  keysGenerated: false,
+  peerKeySet: false,
+  sharedKeyDerived: false,
+  connected: false
+};
+
+function updateUI() {
+  const genBtn = document.getElementById("genKeysBtn");
+  const genDone = document.getElementById("genKeysDone");
+  const setPeerBtn = document.getElementById("setPeerKeyBtn");
+  const peerDone = document.getElementById("peerKeyDone");
+  const deriveBtn = document.getElementById("deriveBtn");
+  const deriveDone = document.getElementById("deriveDone");
+  const createOfferBtn = document.getElementById("createOfferBtn");
+  const connectBtn = document.getElementById("connectBtn");
+  const msgInput = document.getElementById("msgInput");
+  const sendBtn = document.getElementById("sendBtn");
+  const overallStatus = document.getElementById("overallStatus");
+  const encStatusIcon = document.getElementById("encStatusIcon");
+  const encStatusText = document.getElementById("encStatusText");
+  const encBadge = document.getElementById("encBadge");
+
+  // Step 1
+  if (state.keysGenerated) {
+    genBtn.disabled = true;
+    genBtn.textContent = "✓ 已生成";
+    genDone.style.display = "inline";
+    document.getElementById("step1").classList.remove("active");
+    document.getElementById("step1").classList.add("done");
+    document.getElementById("step2").classList.add("active");
+  }
+
+  // Step 2
+  if (state.peerKeySet) {
+    setPeerBtn.disabled = true;
+    setPeerBtn.textContent = "✓ 已确认";
+    peerDone.style.display = "inline";
+    document.getElementById("step2").classList.remove("active");
+    document.getElementById("step2").classList.add("done");
+    document.getElementById("step3").classList.add("active");
+  }
+
+  // Step 3
+  if (state.sharedKeyDerived) {
+    deriveBtn.disabled = true;
+    deriveBtn.textContent = "✓ 已派生";
+    deriveDone.style.display = "inline";
+    document.getElementById("step3").classList.remove("active");
+    document.getElementById("step3").classList.add("done");
+    document.getElementById("step4").classList.add("active");
+    overallStatus.innerHTML = "🔒 端到端加密已就绪";
+    encStatusIcon.textContent = "🔒";
+    encStatusText.textContent = "端到端加密";
+    encBadge.style.display = "inline-flex";
+  }
+
+  // Step 4
+  createOfferBtn.disabled = !state.sharedKeyDerived;
+  connectBtn.disabled = !state.sharedKeyDerived;
+
+  // Chat input
+  const canChat = state.sharedKeyDerived && state.connected;
+  msgInput.disabled = !canChat;
+  sendBtn.disabled = !canChat;
+  if (canChat) msgInput.placeholder = "输入消息...";
+  else if (state.sharedKeyDerived) msgInput.placeholder = "等待 P2P 连接...";
+  else msgInput.placeholder = "请先完成安全设置...";
+
+  // Contact status
+  updateContactStatus();
+}
+
+function updateContactStatus() {
+  const el = document.getElementById("contactStatus");
+  const chatStatus = document.getElementById("chatStatus");
+  if (state.connected && state.sharedKeyDerived) {
+    el.textContent = "在线 · 端到端加密";
+    el.className = "contact-status online";
+    chatStatus.textContent = "在线 · 🔒 端到端加密";
+    chatStatus.className = "chat-header-status connected";
+  } else if (state.sharedKeyDerived) {
+    el.textContent = "密钥就绪，等待连接...";
+    el.className = "contact-status";
+    chatStatus.textContent = "密钥就绪，等待连接...";
+    chatStatus.className = "chat-header-status";
+  } else if (state.keysGenerated) {
+    el.textContent = "等待交换密钥...";
+    el.className = "contact-status";
+    chatStatus.textContent = "等待交换密钥...";
+    chatStatus.className = "chat-header-status";
+  } else {
+    el.textContent = "等待安全设置...";
+    el.className = "contact-status";
+    chatStatus.textContent = "等待安全设置...";
+    chatStatus.className = "chat-header-status";
+  }
+}
+
+function updateConnStatus(status) {
+  const el = document.getElementById("connStatus");
+  if (status === "connected") {
+    el.textContent = "✅ 已连接";
+    el.style.color = "#4caf50";
+    state.connected = true;
+    updateUI();
+  } else if (status === "connecting") {
+    el.textContent = "⏳ 连接中...";
+    el.style.color = "#ff9800";
+  } else if (status === "failed") {
+    el.innerHTML = "❌ 连接失败 · <a href='#' onclick='location.reload()' style='color:#4fc3f7'>刷新重试</a>";
+    el.style.color = "#e53935";
+    state.connected = false;
+    updateUI();
+  } else {
+    el.textContent = "等待连接...";
+    el.style.color = "#6c7884";
+    state.connected = false;
+    updateUI();
+  }
+}
+
+/* =====================================================================
+   SETUP FLOW
+   ===================================================================== */
+function initSetup() {
+  document.getElementById("setupOverlay").classList.add("hidden");
+  openSettings();
+}
+
+function openSettings() {
+  document.getElementById("settingsModal").classList.add("show");
+}
+
+function closeSettings() {
+  document.getElementById("settingsModal").classList.remove("show");
+}
+
+async function generateKeys() {
+  if (state.keysGenerated) return toast("密钥对已生成，无需重复生成");
+  try {
+    const btn = document.getElementById("genKeysBtn");
+    btn.disabled = true;
+    btn.textContent = "生成中...";
+    await Crypto.generateKeyPair();
+    document.getElementById("myPublicKeyDisplay").textContent = Crypto.publicKeyBase64;
+    state.keysGenerated = true;
+    document.getElementById("setPeerKeyBtn").disabled = false;
+    updateUI();
+    toast("✅ 密钥对已生成");
+  } catch(e) {
+    toast("❌ 密钥生成失败: " + e.message);
+    document.getElementById("genKeysBtn").disabled = false;
+    document.getElementById("genKeysBtn").textContent = "生成密钥对";
+  }
+}
+
+function copyMyPublicKey() {
+  if (!Crypto.publicKeyBase64) return toast("请先生成密钥对");
+  navigator.clipboard.writeText(Crypto.publicKeyBase64).then(() => {
+    toast("📋 公钥已复制");
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement("textarea");
+    ta.value = Crypto.publicKeyBase64;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    toast("📋 公钥已复制");
+  });
+}
+
+async function setPeerPublicKey() {
+  if (state.peerKeySet) return toast("对方公钥已确认");
+  const input = document.getElementById("peerPublicKeyInput").value.trim();
+  if (!input) return toast("请粘贴对方的公钥");
+  try {
+    await Crypto.importPeerPublicKey(input);
+    state.peerKeySet = true;
+    document.getElementById("deriveBtn").disabled = false;
+    updateUI();
+    toast("✅ 对方公钥已确认");
+  } catch(e) {
+    toast("❌ 公钥无效: " + e.message);
+  }
+}
+
+async function deriveSharedKey() {
+  if (state.sharedKeyDerived) return toast("共享密钥已派生");
+  if (!Crypto.peerPublicKey) return toast("请先确认对方的公钥");
+  try {
+    const btn = document.getElementById("deriveBtn");
+    btn.disabled = true;
+    btn.textContent = "派生中...";
+    await Crypto.deriveSharedKey();
+    state.sharedKeyDerived = true;
+    updateUI();
+    toast("🔒 共享密钥已派生，加密就绪");
+  } catch(e) {
+    toast("❌ 密钥派生失败: " + e.message);
+    document.getElementById("deriveBtn").disabled = false;
+    document.getElementById("deriveBtn").textContent = "✨ 派生共享密钥";
+  }
+}
+
+/* =====================================================================
+   WEBRTC SIGNALING
+   ===================================================================== */
+async function createOffer() {
+  if (!Crypto.keyPair) return toast("请先生成自己的密钥对（步骤 1）");
+  try {
+    const btn = document.getElementById("createOfferBtn");
+    btn.disabled = true;
+    btn.textContent = "生成中...";
+    const wrapped = await WebRTC.createOffer();
+    document.getElementById("sdpInput").value = wrapped;
+    btn.textContent = "📤 复制邀请";
+    // Copy to clipboard
+    try {
+      await navigator.clipboard.writeText(wrapped);
+      toast("📤 连接邀请已生成并复制，请发送给对方");
+    } catch(e) {
+      toast("📤 连接邀请已生成，请复制并发送给对方");
+    }
+    btn.onclick = () => {
+      navigator.clipboard.writeText(wrapped).then(() => toast("📋 已复制"));
+    };
+    // If peer already imported the public key from the offer, great
+    // Now we need to wait for the answer
+    document.getElementById("connectBtn").disabled = false;
+    document.getElementById("connStatus").textContent = "等待对方应答...";
+    document.getElementById("connStatus").style.color = "#ff9800";
+  } catch(e) {
+    toast("❌ 创建邀请失败: " + e.message);
+    document.getElementById("createOfferBtn").disabled = false;
+    document.getElementById("createOfferBtn").textContent = "📤 创建连接邀请";
+  }
+}
+
+function showAcceptOffer() {
+  document.getElementById("acceptModal").classList.add("show");
+  document.getElementById("acceptResult").style.display = "none";
+  document.getElementById("acceptSDPInput").value = "";
+}
+
+function closeAcceptModal() {
+  document.getElementById("acceptModal").classList.remove("show");
+}
+
+async function processAcceptOffer() {
+  const input = document.getElementById("acceptSDPInput").value.trim();
+  if (!input) return toast("请粘贴对方的连接邀请");
+  if (!Crypto.keyPair) return toast("请先生成自己的密钥对（步骤 1）");
+  try {
+    const btn = document.getElementById("acceptProcessBtn");
+    btn.disabled = true;
+    btn.textContent = "处理中...";
+    const answer = await WebRTC.createAnswer(input);
+    document.getElementById("answerData").textContent = answer;
+    document.getElementById("acceptResult").style.display = "block";
+    btn.textContent = "✅ 已处理";
+    // Copy to clipboard
+    try {
+      await navigator.clipboard.writeText(answer);
+      toast("📋 应答数据已生成并复制，请发送给对方");
+    } catch(e) {
+      toast("📋 应答数据已生成，请复制发送给对方");
+    }
+    // Update connection status
+    document.getElementById("connStatus").textContent = "已发送应答，等待连接...";
+    document.getElementById("connStatus").style.color = "#ff9800";
+    updateUI();
+  } catch(e) {
+    toast("❌ 处理邀请失败: " + e.message);
+    document.getElementById("acceptProcessBtn").disabled = false;
+    document.getElementById("acceptProcessBtn").textContent = "处理并生成应答";
+  }
+}
+
+function copyAnswerData() {
+  const data = document.getElementById("answerData").textContent;
+  if (!data) return;
+  navigator.clipboard.writeText(data).then(() => toast("📋 已复制"));
+}
+
+async function applySDP() {
+  const input = document.getElementById("sdpInput").value.trim();
+  if (!input) return toast("请粘贴信令数据");
+  try {
+    await WebRTC.applyAnswer(input);
+    document.getElementById("connStatus").textContent = "⏳ 连接中...";
+    document.getElementById("connStatus").style.color = "#ff9800";
+    updateUI();
+    toast("⏳ 正在建立 P2P 连接...");
+  } catch(e) {
+    toast("❌ 应用失败: " + e.message);
+  }
+}
+
+/* =====================================================================
+   CHAT / MESSAGING
+   ===================================================================== */
+WebRTC.onMessage = async (data) => {
+  try {
+    const plaintext = await Crypto.decrypt(data);
+    addMessage(plaintext, "received");
+  } catch(e) {
+    console.error("Decrypt failed:", e);
+    addMessage("⚠️ 消息解密失败", "system");
+  }
+};
+
+WebRTC.onConnect = () => {
+  toast("✅ P2P 连接已建立");
+  updateUI();
+};
+
+async function sendMsg() {
+  const input = document.getElementById("msgInput");
+  const text = input.value.trim();
+  if (!text) return;
+  if (!state.sharedKeyDerived) return toast("请先完成密钥设置");
+  if (!state.connected) return toast("请先建立 P2P 连接");
+
+  try {
+    const cipher = await Crypto.encrypt(text);
+    const sent = WebRTC.send(cipher);
+    if (!sent) {
+      return toast("❌ 发送失败，连接已断开");
+    }
+    addMessage(text, "sent");
+    input.value = "";
+    input.style.height = "auto";
+  } catch(e) {
+    toast("❌ 加密失败: " + e.message);
+  }
+}
+
+function addMessage(text, type) {
+  const container = document.getElementById("messages");
+  const empty = document.getElementById("emptyState");
+
+  // Show messages container, hide empty state
+  container.style.display = "flex";
+  empty.style.display = "none";
+
+  const div = document.createElement("div");
+  div.className = "message " + type;
+
+  if (type === "system") {
+    div.textContent = text;
+  } else {
+    const span = document.createElement("span");
+    span.textContent = text;
+    div.appendChild(span);
+    const time = document.createElement("div");
+    time.className = "time";
+    time.textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    div.appendChild(time);
+  }
+
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function selectContact() {
+  // On mobile, show main chat
+  if (window.innerWidth <= 768) {
+    document.getElementById("sidebar").classList.add("hide");
+    document.getElementById("main").classList.add("show");
+  }
+}
+
+function showSidebar() {
+  document.getElementById("sidebar").classList.remove("hide");
+  document.getElementById("main").classList.remove("show");
+}
+
+// Auto-resize textarea
+document.getElementById("msgInput").addEventListener("input", function() {
+  this.style.height = "auto";
+  this.style.height = Math.min(this.scrollHeight, 120) + "px";
+});
+
+/* =====================================================================
+   KEYBOARD SHORTCUTS
+   ===================================================================== */
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    closeSettings();
+    closeAcceptModal();
+  }
+});
+
+/* =====================================================================
+   INIT — show setup overlay
+   ===================================================================== */
+console.log("🔐 SecureChat loaded — ECDH + AES-256-GCM + WebRTC");
+</script>
+</body>
+</html>
