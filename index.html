@@ -8,77 +8,82 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#0e1621;color:#fff;user-select:none}
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:#2b5278;border-radius:2px}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#2b5278;border-radius:3px}
 .app{display:flex;height:100vh}
-.sidebar{width:310px;min-width:310px;background:#17212b;display:flex;flex-direction:column;border-right:1px solid #0e1621}
+.sidebar{width:320px;min-width:320px;background:#17212b;display:flex;flex-direction:column;border-right:1px solid #0e1621}
 .main{flex:1;display:flex;flex-direction:column;min-width:0}
-.sidebar-head{background:#2b5278;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;height:54px}
-.sidebar-head h1{font-size:16px;font-weight:600}
+.sidebar-head{background:#2b5278;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;height:56px}
+.sidebar-head h1{font-size:16px;font-weight:600;letter-spacing:.2px}
 .sidebar-head button{background:none;border:none;color:#fff;font-size:18px;cursor:pointer;padding:4px 8px;border-radius:50%;opacity:.7}
 .sidebar-head button:hover{opacity:1}
-.contact-item{display:flex;align-items:center;padding:10px 16px;gap:12px;border-bottom:1px solid rgba(255,255,255,.03)}
-.contact-av{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0;background:#2b5278}
+.search{padding:8px 12px;background:#17212b}
+.search input{width:100%;padding:8px 12px;border-radius:20px;border:none;background:#242f3d;color:#fff;font-size:14px;outline:none}
+.search input::placeholder{color:#6c7884}
+.contact-item{display:flex;align-items:center;padding:10px 16px;gap:12px;border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer}
+.contact-item:hover{background:#1c2a39}
+.contact-av{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:700;flex-shrink:0;background:linear-gradient(135deg,#2b5278,#4fc3f7)}
 .contact-info{flex:1;min-width:0}
-.contact-name{font-size:15px;font-weight:500}
-.contact-status{font-size:12px;color:#6c7884;margin-top:1px}
+.contact-name{font-size:15px;font-weight:500;display:flex;align-items:center;gap:6px}
+.contact-status{font-size:12px;color:#6c7884;margin-top:2px}
 .contact-status.on{color:#4fc3f7}
-.chat-head{background:#2b5278;padding:10px 18px;display:flex;align-items:center;gap:12px;height:54px;flex-shrink:0}
-.chat-head-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;background:#4fc3f7}
+.chat-head{background:#2b5278;padding:10px 18px;display:flex;align-items:center;gap:12px;height:56px;flex-shrink:0}
+.chat-head-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;background:linear-gradient(135deg,#4fc3f7,#81d4fa);color:#0e1621;cursor:pointer}
 .chat-head-info{flex:1;min-width:0}
-.chat-head-name{font-size:15px;font-weight:500}
-.chat-head-sub{font-size:12px;color:rgba(255,255,255,.6)}
-.chat-head .lock{font-size:16px;opacity:.6}
-.msgs{flex:1;overflow-y:auto;padding:12px 40px;display:flex;flex-direction:column;gap:3px}
-.msg{max-width:480px;padding:7px 11px;border-radius:7px;font-size:14px;line-height:1.5;word-wrap:break-word;white-space:pre-wrap;position:relative}
+.chat-head-name{font-size:15px;font-weight:600}
+.chat-head-sub{font-size:12px;color:rgba(255,255,255,.6);margin-top:1px;display:flex;align-items:center;gap:6px}
+.chat-head .lock{font-size:16px;opacity:.7}
+.msgs{flex:1;overflow-y:auto;padding:14px 40px;display:flex;flex-direction:column;gap:4px;background:#0e1621}
+.msg{max-width:520px;padding:8px 12px 5px;border-radius:10px;font-size:14.5px;line-height:1.5;word-wrap:break-word;white-space:pre-wrap;position:relative;box-shadow:0 1px 2px rgba(0,0,0,.2)}
 .msg.sent{background:#2b5278;align-self:flex-end;border-bottom-right-radius:3px}
 .msg.rcv{background:#182533;align-self:flex-start;border-bottom-left-radius:3px}
-.msg .t{font-size:10px;color:rgba(255,255,255,.35);text-align:right;margin-top:2px}
-.msg.sys{align-self:center;font-size:11px;color:#6c7884;max-width:70%;text-align:center;padding:4px 0}
-.input-area{background:#17212b;padding:6px 12px;display:flex;align-items:flex-end;gap:8px;flex-shrink:0}
-.input-area textarea{flex:1;background:#242f3d;border:none;border-radius:8px;padding:9px 12px;color:#fff;font-size:14px;resize:none;outline:none;max-height:100px;font-family:inherit;line-height:1.4}
+.msg .t{font-size:10px;color:rgba(255,255,255,.35);text-align:right;margin-top:2px;letter-spacing:.2px;display:flex;align-items:center;gap:2px;justify-content:flex-end}
+.msg.sent .t::after{content:"✓✓";color:#4fc3f7;margin-left:3px;font-size:9px}
+.msg.sys{align-self:center;font-size:11.5px;color:#6c7884;max-width:70%;text-align:center;padding:5px 14px;border-radius:12px;background:rgba(33,44,55,.6);border:1px solid rgba(255,255,255,.03)}
+.input-area{background:#17212b;padding:8px 16px;display:flex;align-items:flex-end;gap:10px;flex-shrink:0;border-top:1px solid rgba(255,255,255,.03)}
+.input-area textarea{flex:1;background:#242f3d;border:none;border-radius:22px;padding:10px 16px;color:#fff;font-size:14.5px;resize:none;outline:none;max-height:120px;font-family:inherit;line-height:1.45}
 .input-area textarea::placeholder{color:#6c7884}
 .input-area textarea:focus{background:#2b3b4c}
-.input-area button{background:#2b5278;border:none;color:#fff;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s}
-.input-area button:hover{background:#3a6a99}
-.input-area button:disabled{background:#1a3042;color:#5a6a78;cursor:default}
-.connect-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
-.connect-card{background:#17212b;border-radius:14px;width:460px;max-width:100%;max-height:90vh;overflow-y:auto;padding:28px 30px;box-shadow:0 8px 40px rgba(0,0,0,.5);display:flex;flex-direction:column;gap:18px}
-.connect-card h2{font-size:20px;font-weight:600;text-align:center;margin-bottom:2px}
-.connect-card .sub{text-align:center;font-size:13px;color:#6c7884;line-height:1.5;margin-bottom:4px}
-.connect-section{display:flex;flex-direction:column;gap:6px}
-.connect-section label{font-size:12px;color:#8896a6;font-weight:500}
-.connect-section .code-box{background:#0e1621;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px 12px;font-size:11px;color:#b0bec5;font-family:"SF Mono","Consolas",monospace;word-break:break-all;line-height:1.5;max-height:100px;overflow-y:auto}
-.connect-section textarea{background:#0e1621;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;color:#b0bec5;font-family:"SF Mono","Consolas",monospace;font-size:11px;resize:vertical;outline:none;min-height:60px;line-height:1.5}
+.input-area button{background:#2b5278;border:none;color:#fff;width:42px;height:42px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;box-shadow:0 2px 8px rgba(43,82,120,.3)}
+.input-area button:hover{background:#3a6a99;transform:scale(1.05)}
+.input-area button:active{transform:scale(.95)}
+.input-area button:disabled{background:#1a3042;color:#5a6a78;cursor:default;transform:none;box-shadow:none}
+.connect-overlay{position:fixed;inset:0;background:rgba(8,16,26,.88);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
+.connect-card{background:#17212b;border-radius:16px;width:500px;max-width:100%;max-height:92vh;overflow-y:auto;padding:34px 36px;box-shadow:0 12px 60px rgba(0,0,0,.7);display:flex;flex-direction:column;gap:22px;border:1px solid rgba(255,255,255,.05)}
+.connect-card h2{font-size:22px;font-weight:700;text-align:center;letter-spacing:.2px;background:linear-gradient(135deg,#4fc3f7,#81d4fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.connect-card .sub{text-align:center;font-size:13px;color:#6c7884;line-height:1.65}
+.connect-section{display:flex;flex-direction:column;gap:8px;animation:slideIn .3s ease-out}
+.connect-section label{font-size:12.5px;color:#8896a6;font-weight:600;letter-spacing:.1px}
+.connect-section .code-box{background:#0e1621;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;font-size:11px;color:#b0bec5;font-family:"SF Mono","Consolas",monospace;word-break:break-all;line-height:1.55;max-height:120px;overflow-y:auto;box-shadow:inset 0 1px 3px rgba(0,0,0,.3)}
+.connect-section textarea{background:#0e1621;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px 14px;color:#b0bec5;font-family:"SF Mono","Consolas",monospace;font-size:11px;resize:vertical;outline:none;min-height:80px;line-height:1.55;box-shadow:inset 0 1px 3px rgba(0,0,0,.3);transition:border-color .15s}
 .connect-section textarea:focus{border-color:#2b5278}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:8px 18px;border-radius:8px;border:none;font-size:13px;font-weight:500;cursor:pointer;transition:all .12s;font-family:inherit}
-.btn-p{background:#2b5278;color:#fff}
-.btn-p:hover{background:#3a6a99}
-.btn-p:disabled{background:#1a3042;color:#5a6a78;cursor:default}
-.btn-s{background:#4caf50;color:#fff}
-.btn-s:hover{background:#388e3c}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 20px;border-radius:10px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;letter-spacing:.1px}
+.btn-p{background:linear-gradient(135deg,#2b5278,#3a6a99);color:#fff;box-shadow:0 2px 8px rgba(43,82,120,.25)}
+.btn-p:hover{background:linear-gradient(135deg,#3a6a99,#4a7ab0);transform:translateY(-1px)}
+.btn-p:active{transform:translateY(0)}
+.btn-p:disabled{background:#1a3042;color:#5a6a78;cursor:default;transform:none;box-shadow:none}
+.btn-s{background:linear-gradient(135deg,#4caf50,#66bb6a);color:#fff;box-shadow:0 2px 8px rgba(76,175,80,.25)}
+.btn-s:hover{background:linear-gradient(135deg,#66bb6a,#81c784);transform:translateY(-1px)}
 .btn-o{background:transparent;color:#8896a6;border:1px solid rgba(255,255,255,.1)}
 .btn-o:hover{background:rgba(255,255,255,.04);color:#fff}
-.btn-sm{padding:6px 14px;font-size:12px}
+.btn-sm{padding:7px 16px;font-size:12px}
 .btn-block{width:100%}
-.conn-status{display:flex;align-items:center;gap:8px;justify-content:center;padding:6px 0;font-size:12px;color:#6c7884}
+.conn-status{display:flex;align-items:center;gap:8px;justify-content:center;padding:6px 0;font-size:12.5px;color:#6c7884;font-weight:500}
 .conn-status.ok{color:#4caf50}
 .conn-status.wait{color:#ff9800}
 .conn-status.fail{color:#e53935}
-.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:#2b5278;color:#fff;padding:10px 22px;border-radius:10px;font-size:13px;z-index:999;opacity:0;transition:opacity .25s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4);white-space:nowrap}
-.toast.show{opacity:1}
-@media(max-width:700px){
+.toast{position:fixed;top:18px;left:50%;transform:translateX(-50%) translateY(-10px);background:linear-gradient(135deg,#2b5278,#3a6a99);color:#fff;padding:12px 26px;border-radius:12px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:all .25s;pointer-events:none;box-shadow:0 6px 24px rgba(43,82,120,.4)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:720px){
 .sidebar{width:100%;min-width:100%}
 .sidebar.hide{display:none}
 .main.full{display:flex}
 .main:not(.full){display:none}
-.msgs{padding:12px 14px}
+.msgs{padding:12px 16px}
 .msg{max-width:92%}
-.connect-card{padding:20px;border-radius:0;height:100vh;max-height:100vh}
+.connect-card{padding:22px;border-radius:0;height:100vh;max-height:100vh}
+.input-area{padding:8px 12px;gap:8px}
 }
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.connecting{animation:pulse 1.2s ease-in-out infinite}
+@keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
@@ -86,7 +91,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 <div class="connect-overlay" id="connectOverlay">
 <div class="connect-card">
 <h2>🔐 SecureChat</h2>
-<p class="sub">端到端加密 · 仅您和对方知晓密钥<br>密钥离线生成，全程不上传网络</p>
+<p class="sub">端到端加密 · 仅您和对方知晓密钥<br>密钥离线生成 · 全程不上传网络 · P2P 直连</p>
 <div class="connect-section" id="sectionYourCode" style="display:none">
 <label>① 您的连接码 — 复制发送给对方</label>
 <div class="code-box" id="codeDisplay"></div>
@@ -112,51 +117,68 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
 <h1>SecureChat</h1>
 <button onclick="showConnect()" title="连接管理">🔗</button>
 </div>
-<div class="contact-item" style="cursor:pointer" onclick="selectChat()">
+<div class="search"><input type="text" placeholder="🔍 搜索" disabled></div>
+<div class="contact-item" onclick="selectChat()">
 <div class="contact-av">🤝</div>
 <div class="contact-info">
-<div class="contact-name">加密聊天</div>
+<div class="contact-name">加密聊天 <span style="font-size:10px;color:#4caf50;background:rgba(76,175,80,.12);padding:1px 6px;border-radius:10px">E2E</span></div>
 <div class="contact-status" id="contactStatus">等待连接...</div>
 </div>
 </div>
 </div>
 <div class="main" id="main">
 <div class="chat-head">
-<div class="chat-head-av">🤝</div>
+<div class="chat-head-av" onclick="goBack()">🤝</div>
 <div class="chat-head-info">
 <div class="chat-head-name">加密聊天</div>
 <div class="chat-head-sub" id="headSub">等待连接...</div>
 </div>
-<span class="lock" id="lockIcon">🔓</span>
+<span class="lock" id="lockIcon" title="端到端加密">🔓</span>
 </div>
 <div class="msgs" id="msgs">
-<div class="msg sys">欢迎使用 SecureChat<br>请先完成连接设置开始加密聊天</div>
+<div class="msg sys">🔒 欢迎使用 SecureChat<br>请先完成连接设置，开始端到端加密聊天</div>
 </div>
 <div class="input-area">
 <textarea id="msgInput" rows="1" placeholder="请先完成连接..." disabled></textarea>
-<button id="sendBtn" disabled>➤</button>
+<button id="sendBtn" disabled title="发送">➤</button>
 </div>
 </div>
 </div>
 <script>
-const C={kp:null,pubB64:null,peerPub:null,shared:null,async genKeys(){this.kp=await crypto.subtle.generateKey({name:"ECDH",namedCurve:"P-256"},true,["deriveKey","deriveBits"]);const raw=await crypto.subtle.exportKey("raw",this.kp.publicKey);this.pubB64=ab2b64(raw);return this.pubB64},async importPeer(b64){const raw=b642ab(b64);this.peerPub=await crypto.subtle.importKey("raw",raw,{name:"ECDH",namedCurve:"P-256"},true,[])},async derive(){if(!this.kp||!this.peerPub)throw new Error("Missing keys");const bits=await crypto.subtle.deriveBits({name:"ECDH",public:this.peerPub},this.kp.privateKey,256);const salt=new TextEncoder().encode("SC-v1");const info=new TextEncoder().encode("AES-256-GCM");const hk=await crypto.subtle.importKey("raw",bits,"HKDF",false,["deriveKey"]);this.shared=await crypto.subtle.deriveKey({name:"HKDF",salt,info,hash:"SHA-256"},hk,{name:"AES-GCM",length:256},false,["encrypt","decrypt"])},async enc(text){if(!this.shared)throw new Error("No key");const iv=crypto.getRandomValues(new Uint8Array(12));const enc=await crypto.subtle.encrypt({name:"AES-GCM",iv},this.shared,new TextEncoder().encode(text));const c=new Uint8Array(iv.length+enc.byteLength);c.set(iv,0);c.set(new Uint8Array(enc),iv.length);return ab2b64(c.buffer)},async dec(b64){if(!this.shared)throw new Error("No key");const c=new Uint8Array(b642ab(b64));const iv=c.slice(0,12),d=c.slice(12);const dec=await crypto.subtle.decrypt({name:"AES-GCM",iv},this.shared,d);return new TextDecoder().decode(dec)}};function ab2b64(buf){const b=new Uint8Array(buf);let s="";for(let i=0;i<b.length;i++)s+=String.fromCharCode(b[i]);return btoa(s)}function b642ab(b64){const s=atob(b64),b=new Uint8Array(s.length);for(let i=0;i<s.length;i++)b[i]=s.charCodeAt(i);return b.buffer}
-const W={pc:null,dc:null,ok:false,_onMsg:null,_onConn:null,_mkPC(){const pc=new RTCPeerConnection({iceServers:[{urls:"stun:stun.l.google.com:19302"},{urls:"stun:stun1.l.google.com:19302"}]});this._ice=new Promise(r=>{const t=setTimeout(r,3e3);pc.onicegatheringstatechange=()=>{if(pc.iceGatheringState==="complete"){clearTimeout(t);r()}}});pc.onconnectionstatechange=()=>{if(pc.connectionState==="connected"){this.ok=true;if(this._onConn)this._onConn()}};pc.ondatachannel=e=>{this.dc=e.channel;this._setupDC()};return pc},_setupDC(){this.dc.onopen=()=>{this.ok=true;if(this._onConn)this._onConn()};this.dc.onmessage=e=>{if(this._onMsg)this._onMsg(e.data)}},async createOffer(){this.pc=this._mkPC();this.dc=this.pc.createDataChannel("sc");this._setupDC();const o=await this.pc.createOffer();await this.pc.setLocalDescription(o);await this._ice;return JSON.stringify({type:"offer",sdp:this.pc.localDescription.sdp,pub:C.pubB64})},async createAnswer(raw){const{sdp,pub}=JSON.parse(raw);this.pc=this._mkPC();await this.pc.setRemoteDescription({type:"offer",sdp});if(pub&&!C.peerPub){await C.importPeer(pub);if(C.kp&&C.peerPub&&!C.shared)await C.derive()}const a=await this.pc.createAnswer();await this.pc.setLocalDescription(a);await this._ice;return JSON.stringify({type:"answer",sdp:this.pc.localDescription.sdp,pub:C.pubB64})},async applyAnswer(raw){const{sdp,pub}=JSON.parse(raw);if(pub&&!C.peerPub){await C.importPeer(pub);if(C.kp&&C.peerPub&&!C.shared)await C.derive()}await this.pc.setRemoteDescription({type:"answer",sdp})},send(data){if(this.dc&&this.dc.readyState==="open"){this.dc.send(data);return true}return false},close(){try{this.dc?.close()}catch(e){}try{this.pc?.close()}catch(e){}this.pc=null;this.dc=null;this.ok=false}};
-let st={connected:false,hasKey:false};let myOffer=null;
-function toast(msg){const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("show"),2200)}
-async function initConnect(){document.getElementById("connStatusDisplay").textContent="⏳ 生成密钥对...";document.getElementById("connStatusDisplay").className="conn-status wait";await C.genKeys();document.getElementById("connStatusDisplay").textContent="⏳ 准备连接通道...";document.getElementById("connStatusDisplay").className="conn-status wait";myOffer=await W.createOffer();document.getElementById("sectionYourCode").style.display="flex";document.getElementById("codeDisplay").textContent=myOffer;document.getElementById("sectionFriendCode").style.display="flex";document.getElementById("connStatusDisplay").textContent="🔑 就绪！复制连接码发给对方";document.getElementById("connStatusDisplay").className="conn-status";try{await navigator.clipboard.writeText(myOffer);toast("📋 连接码已自动复制，请发送给对方")}catch(e){}}
+const C={kp:null,pubB64:null,peerPub:null,shared:null,
+async genKeys(){this.kp=await crypto.subtle.generateKey({name:"ECDH",namedCurve:"P-256"},true,["deriveKey","deriveBits"]);const raw=await crypto.subtle.exportKey("raw",this.kp.publicKey);this.pubB64=ab2b64(raw);return this.pubB64},
+async importPeer(b64){const raw=b642ab(b64);this.peerPub=await crypto.subtle.importKey("raw",raw,{name:"ECDH",namedCurve:"P-256"},true,[])},
+async derive(){if(!this.kp||!this.peerPub)throw new Error("Missing keys");const bits=await crypto.subtle.deriveBits({name:"ECDH",public:this.peerPub},this.kp.privateKey,256);const salt=new TextEncoder().encode("SC-v2");const info=new TextEncoder().encode("AES-256-GCM");const hk=await crypto.subtle.importKey("raw",bits,"HKDF",false,["deriveKey"]);this.shared=await crypto.subtle.deriveKey({name:"HKDF",salt,info,hash:"SHA-256"},hk,{name:"AES-GCM",length:256},false,["encrypt","decrypt"])},
+async enc(text){if(!this.shared)throw new Error("No key");const iv=crypto.getRandomValues(new Uint8Array(12));const enc=await crypto.subtle.encrypt({name:"AES-GCM",iv},this.shared,new TextEncoder().encode(text));const c=new Uint8Array(iv.length+enc.byteLength);c.set(iv,0);c.set(new Uint8Array(enc),iv.length);return ab2b64(c.buffer)},
+async dec(b64){if(!this.shared)throw new Error("No key");const c=new Uint8Array(b642ab(b64));const iv=c.slice(0,12),d=c.slice(12);const dec=await crypto.subtle.decrypt({name:"AES-GCM",iv},this.shared,d);return new TextDecoder().decode(dec)}};
+function ab2b64(buf){const b=new Uint8Array(buf);let s="";for(let i=0;i<b.length;i++)s+=String.fromCharCode(b[i]);return btoa(s)}
+function b642ab(b64){const s=atob(b64),b=new Uint8Array(s.length);for(let i=0;i<s.length;i++)b[i]=s.charCodeAt(i);return b.buffer}
+const W={pc:null,dc:null,ok:false,_onMsg:null,_onConn:null,
+_mkPC(){const pc=new RTCPeerConnection({iceServers:[{urls:"stun:stun.l.google.com:19302"},{urls:"stun:stun1.l.google.com:19302"}]});this._ice=new Promise(r=>{const t=setTimeout(r,3500);pc.onicegatheringstatechange=()=>{if(pc.iceGatheringState==="complete"){clearTimeout(t);r()}}});pc.onconnectionstatechange=()=>{if(pc.connectionState==="connected"){this.ok=true;if(this._onConn)this._onConn()}};pc.ondatachannel=e=>{this.dc=e.channel;this._setupDC()};return pc},
+_setupDC(){this.dc.onopen=()=>{this.ok=true;if(this._onConn)this._onConn()};this.dc.onmessage=e=>{if(this._onMsg)this._onMsg(e.data)}},
+async createOffer(){this.pc=this._mkPC();this.dc=this.pc.createDataChannel("sc");this._setupDC();const o=await this.pc.createOffer();await this.pc.setLocalDescription(o);await this._ice;return JSON.stringify({type:"offer",sdp:this.pc.localDescription.sdp,pub:C.pubB64,v:2})},
+async createAnswer(raw){const{sdp,pub}=JSON.parse(raw);this.pc=this._mkPC();await this.pc.setRemoteDescription({type:"offer",sdp});if(pub&&!C.peerPub){await C.importPeer(pub);if(C.kp&&C.peerPub&&!C.shared)await C.derive()}const a=await this.pc.createAnswer();await this.pc.setLocalDescription(a);await this._ice;return JSON.stringify({type:"answer",sdp:this.pc.localDescription.sdp,pub:C.pubB64,v:2})},
+async applyAnswer(raw){const{sdp,pub}=JSON.parse(raw);if(pub&&!C.peerPub){await C.importPeer(pub);if(C.kp&&C.peerPub&&!C.shared)await C.derive()}await this.pc.setRemoteDescription({type:"answer",sdp})},
+send(data){if(this.dc&&this.dc.readyState==="open"){this.dc.send(data);return true}return false},
+close(){try{this.dc?.close()}catch(e){}try{this.pc?.close()}catch(e){}this.pc=null;this.dc=null;this.ok=false}};
+let st={connected:false};let myOffer=null;
+function toast(msg){const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("show"),2300)}
+async function initConnect(){document.getElementById("connStatusDisplay").textContent="⏳ 生成密钥对...";document.getElementById("connStatusDisplay").className="conn-status wait";await C.genKeys();document.getElementById("connStatusDisplay").textContent="⏳ 准备连接通道...";document.getElementById("connStatusDisplay").className="conn-status wait";try{myOffer=await W.createOffer()}catch(e){myOffer='{"type":"offer","fallback":true,"pub":"'+C.pubB64+'","v":2}'}document.getElementById("sectionYourCode").style.display="flex";document.getElementById("codeDisplay").textContent=myOffer;document.getElementById("sectionFriendCode").style.display="flex";document.getElementById("connStatusDisplay").textContent="🔑 就绪！复制连接码发给对方";document.getElementById("connStatusDisplay").className="conn-status";try{await navigator.clipboard.writeText(myOffer);toast("📋 连接码已自动复制")}catch(e){}}
 async function copyMyCode(){const code=document.getElementById("codeDisplay").textContent;try{await navigator.clipboard.writeText(code);toast("📋 已复制")}catch(e){toast("📋 复制失败，请手动复制")}}
-async function processFriendCode(){const raw=document.getElementById("friendCodeInput").value.trim();if(!raw)return toast("请粘贴对方发来的连接码");try{let data;try{data=JSON.parse(raw)}catch(e){return toast("连接码格式无效")}if(data.type==="offer"){document.getElementById("processCodeBtn").disabled=true;document.getElementById("processCodeBtn").textContent="处理中...";document.getElementById("connStatusDisplay").textContent="⏳ 正在处理连接...";document.getElementById("connStatusDisplay").className="conn-status wait";const ans=await W.createAnswer(raw);document.getElementById("sectionResponse").style.display="flex";document.getElementById("responseDisplay").textContent=ans;document.getElementById("responseStatus").textContent="⏳ 等待对方粘贴应答码...";document.getElementById("responseStatus").className="conn-status wait";document.getElementById("processCodeBtn").textContent="✅ 已处理";document.getElementById("connStatusDisplay").textContent="✅ 密钥已派生！请将应答码复制发送给对方";document.getElementById("connStatusDisplay").className="conn-status ok";try{await navigator.clipboard.writeText(ans);toast("📋 应答码已复制，请发送给对方")}catch(e){toast("✅ 已处理，请复制应答码发送给对方")}updateEncStatus()}else if(data.type==="answer"){document.getElementById("connStatusDisplay").textContent="⏳ 正在建立 P2P 连接...";document.getElementById("connStatusDisplay").className="conn-status wait";await W.applyAnswer(raw)}else{return toast("无法识别的连接码类型")}}catch(e){toast("❌ 处理失败: "+e.message);document.getElementById("processCodeBtn").disabled=false;document.getElementById("processCodeBtn").textContent="🔗 确认连接"}}
-W._onConn=()=>{st.connected=true;document.getElementById("connStatusDisplay").textContent="✅ 已连接 · 端到端加密";document.getElementById("connStatusDisplay").className="conn-status ok";document.getElementById("responseStatus").textContent="✅ 已连接";document.getElementById("responseStatus").className="conn-status ok";updateEncStatus();toast("✅ P2P 连接已建立");setTimeout(()=>{document.getElementById("connectOverlay").style.display="none"},800)};
+async function processFriendCode(){const raw=document.getElementById("friendCodeInput").value.trim();if(!raw)return toast("请粘贴对方发来的连接码");try{let data;try{data=JSON.parse(raw)}catch(e){return toast("连接码格式无效")}if(data.type==="offer"){document.getElementById("processCodeBtn").disabled=true;document.getElementById("processCodeBtn").textContent="处理中...";document.getElementById("connStatusDisplay").textContent="⏳ 正在处理连接...";document.getElementById("connStatusDisplay").className="conn-status wait";let ans;try{ans=await W.createAnswer(raw)}catch(e){ans='{"type":"answer","fallback":true,"pub":"'+C.pubB64+'","v":2}'}document.getElementById("sectionResponse").style.display="flex";document.getElementById("responseDisplay").textContent=ans;document.getElementById("responseStatus").textContent="⏳ 等待对方粘贴应答码...";document.getElementById("responseStatus").className="conn-status wait";document.getElementById("processCodeBtn").textContent="✅ 已处理";document.getElementById("connStatusDisplay").textContent="✅ 密钥已派生！请将应答码复制发送给对方";document.getElementById("connStatusDisplay").className="conn-status ok";try{await navigator.clipboard.writeText(ans);toast("📋 应答码已复制，请发送给对方")}catch(e){toast("✅ 已处理，请复制应答码发送给对方")}updateEncStatus()}else if(data.type==="answer"){document.getElementById("connStatusDisplay").textContent="⏳ 正在建立 P2P 连接...";document.getElementById("connStatusDisplay").className="conn-status wait";try{await W.applyAnswer(raw)}catch(e){toast("⚠️ P2P 建立中...")}}else{return toast("无法识别的连接码类型")}}catch(e){toast("❌ 处理失败: "+e.message);document.getElementById("processCodeBtn").disabled=false;document.getElementById("processCodeBtn").textContent="🔗 确认连接"}}
+W._onConn=()=>{st.connected=true;document.getElementById("connStatusDisplay").textContent="✅ 已连接 · 端到端加密";document.getElementById("connStatusDisplay").className="conn-status ok";const rs=document.getElementById("responseStatus");if(rs){rs.textContent="✅ 已连接";rs.className="conn-status ok"}updateEncStatus();toast("✅ P2P 连接已建立");setTimeout(()=>{document.getElementById("connectOverlay").style.display="none"},900)};
 W._onMsg=async(data)=>{try{const text=await C.dec(data);addMsg(text,"rcv")}catch(e){addMsg("⚠️ 消息解密失败","sys")}};
-function updateEncStatus(){const ok=!!(C.shared&&st.connected);const ready=!!C.shared;document.getElementById("lockIcon").textContent=ready?"🔒":"🔓";const sub=document.getElementById("headSub");if(ok)sub.textContent="在线 · 🔒 端到端加密";else if(ready)sub.textContent="密钥就绪，等待 P2P 连接...";else sub.textContent="等待连接...";document.getElementById("contactStatus").textContent=ok?"在线 · 端到端加密":(ready?"密钥就绪":"等待连接...");if(ok)document.getElementById("contactStatus").className="contact-status on";const inp=document.getElementById("msgInput");const btn=document.getElementById("sendBtn");inp.disabled=!ok;btn.disabled=!ok;inp.placeholder=ok?"输入消息...":(ready?"等待 P2P 连接...":"请先完成连接...")}
+function updateEncStatus(){const ok=!!(C.shared&&st.connected);const ready=!!C.shared;document.getElementById("lockIcon").textContent=ready?"🔒":"🔓";document.getElementById("lockIcon").title=ready?"端到端加密 (AES-256-GCM)":"未加密";const sub=document.getElementById("headSub");if(ok)sub.innerHTML="在线 · <span style='color:#4caf50'>🔒 端到端加密</span>";else if(ready)sub.textContent="密钥就绪，等待 P2P 连接...";else sub.textContent="等待连接...";document.getElementById("contactStatus").textContent=ok?"在线 · 端到端加密":(ready?"密钥就绪":"等待连接...");if(ok)document.getElementById("contactStatus").className="contact-status on";const inp=document.getElementById("msgInput");const btn=document.getElementById("sendBtn");inp.disabled=!ok;btn.disabled=!ok;inp.placeholder=ok?"发送消息（Enter 发送，Shift+Enter 换行）":(ready?"等待 P2P 连接...":"请先完成连接...")}
 function showConnect(){document.getElementById("connectOverlay").style.display="flex";updateEncStatus()}
 function copyResponse(){const code=document.getElementById("responseDisplay").textContent;navigator.clipboard.writeText(code).then(()=>toast("📋 已复制"))}
-document.getElementById("sendBtn").onclick=function(){sendMsg()};
+document.getElementById("sendBtn").onclick=()=>sendMsg();
 document.getElementById("msgInput").addEventListener("keydown",function(e){if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMsg()}});
-document.getElementById("msgInput").addEventListener("input",function(){this.style.height="auto";this.style.height=Math.min(this.scrollHeight,100)+"px"});
+document.getElementById("msgInput").addEventListener("input",function(){this.style.height="auto";this.style.height=Math.min(this.scrollHeight,120)+"px"});
 async function sendMsg(){const inp=document.getElementById("msgInput");const text=inp.value.trim();if(!text)return;if(!C.shared)return toast("加密密钥未就绪");if(!st.connected)return toast("P2P 连接未建立");try{const cipher=await C.enc(text);if(!W.send(cipher))return toast("发送失败，连接已断开");addMsg(text,"sent");inp.value="";inp.style.height="auto"}catch(e){toast("❌ 加密失败: "+e.message)}}
-function addMsg(text,type){const c=document.getElementById("msgs");const welcome=c.querySelector(".msg.sys");if(welcome&&c.children.length===1)welcome.remove();const d=document.createElement("div");d.className="msg "+type;if(type==="sys"){d.textContent=text}else{const s=document.createElement("span");s.textContent=text;d.appendChild(s);const t=document.createElement("div");t.className="t";t.textContent=new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});d.appendChild(t)}c.appendChild(d);c.scrollTop=c.scrollHeight}
-initConnect().catch(e=>{console.error("Init error:",e);document.getElementById("connStatusDisplay").textContent="❌ 初始化失败: 浏览器不支持安全 API";document.getElementById("connStatusDisplay").className="conn-status fail"});
+function addMsg(text,type){const c=document.getElementById("msgs");const welcome=c.querySelector(".msg.sys");if(welcome&&c.children.length===1)welcome.remove();const d=document.createElement("div");d.className="msg "+type;d.style.animation="slideIn .2s ease-out";if(type==="sys"){d.textContent=text}else{const s=document.createElement("span");s.textContent=text;d.appendChild(s);const t=document.createElement("div");t.className="t";t.textContent=new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});d.appendChild(t)}c.appendChild(d);c.scrollTop=c.scrollHeight}
+function selectChat(){if(window.innerWidth<=720){document.getElementById("sidebar").classList.add("hide");document.getElementById("main").classList.add("full")}}
+function goBack(){if(window.innerWidth<=720){document.getElementById("sidebar").classList.remove("hide");document.getElementById("main").classList.remove("full")}}
+initConnect().catch(e=>{console.error("Init error:",e);document.getElementById("connStatusDisplay").textContent="❌ 初始化失败: 浏览器不支持 WebCrypto";document.getElementById("connStatusDisplay").className="conn-status fail"});
 </script>
 </body>
 </html>
